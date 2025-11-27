@@ -1,0 +1,5 @@
+{
+  "name": "MealPlanner Pro",
+  "description": "A responsive weekly meal planner with automated shopping list generation, PDF export, and AI ingredient suggestions.",
+  "requestFramePermissions": []
+}
