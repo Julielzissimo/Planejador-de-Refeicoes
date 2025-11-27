@@ -58,7 +58,7 @@ O **Planejador de Refeições** é uma Aplicação Web de Página Única (SPA) d
 
 1.  Clone o repositório:
     ```bash
-    git clone [https://github.com/seu-usuario/planejador-refeicoes.git](https://github.com/Julielzissimo/Planejador-de-Refeicoes.git)
+    git clone https://github.com/seu-usuario/planejador-refeicoes.git
     cd planejador-refeicoes
     ```
 
@@ -88,3 +88,21 @@ O projeto utiliza um design system limpo baseado em tons de Esmeralda (`Emerald-
 *   **Inputs:** Fundo branco com texto escuro para máximo contraste.
 *   **Feedback Visual:** Efeitos de hover, loaders animados e transições suaves no Drag & Drop.
 *   **Responsividade:** Funciona em desktops e dispositivos móveis (layout adaptável).
+
+---
+
+## 🤝 Contribuição
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests.
+
+1.  Faça um Fork do projeto
+2.  Crie sua Feature Branch (`git checkout -b feature/MinhaFeature`)
+3.  Commit suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)
+4.  Push para a Branch (`git push origin feature/MinhaFeature`)
+5.  Abra um Pull Request
+
+---
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
