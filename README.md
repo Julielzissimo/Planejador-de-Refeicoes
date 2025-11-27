@@ -58,8 +58,8 @@ O **Planejador de Refeições** é uma Aplicação Web de Página Única (SPA) d
 
 1.  Clone o repositório:
     ```bash
-    git clone https://github.com/seu-usuario/planejador-refeicoes.git
-    cd planejador-refeicoes
+    git clone https://github.com/Julielzissimo/Planejador-de-Refeicoes.git
+    cd Planejador-de-Refeicoes
     ```
 
 2.  Instale as dependências:
