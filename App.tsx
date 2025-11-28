@@ -262,97 +262,131 @@ function App() {
 
   // --- Render Helpers ---
 
-  const renderPlanner = () => (
-    <div className="overflow-x-auto pb-20 select-none touch-pan-x">
-      <div className="min-w-[800px]">
-        {/* Header Row */}
-        <div className="grid gap-2 mb-2" style={{ gridTemplateColumns: `100px repeat(${data.categories.length}, 1fr)` }}>
-          <div className="font-bold text-gray-400 p-2 flex items-end justify-center">
-            <span className="text-xs uppercase tracking-wider">Dia</span>
-          </div>
-          {data.categories.map(cat => (
-            <div key={cat.id} className="bg-emerald-100 text-emerald-800 font-bold p-3 rounded-t-lg text-center shadow-sm">
-              {cat.name}
-            </div>
-          ))}
-        </div>
+  /**
+   * Reusable Cell Render Function
+   * Used by both Mobile (List) and Desktop (Grid) views
+   */
+  const renderCell = (dayIndex: number, cat: { id: string, name: string }) => {
+    const key = `${dayIndex}-${cat.id}`;
+    const entry = data.plan[key];
+    const isDragOver = dragOverCell === key;
+    const hasContent = !!entry?.dishName;
+    const isTouchSource = activeTouchSource === key;
 
-        {/* Rows */}
-        {DAYS_OF_WEEK.map((day, dayIndex) => (
-          <div key={day} className="grid gap-2 mb-2" style={{ gridTemplateColumns: `100px repeat(${data.categories.length}, 1fr)` }}>
-            <div className="font-bold text-gray-600 p-3 flex items-center justify-end bg-gray-100 rounded-l-lg">
-              {day}
+    return (
+      <div 
+        key={key}
+        data-cell-key={key} // Critical for Touch detection
+        
+        // Mouse Events
+        draggable={hasContent}
+        onDragStart={(e) => hasContent && handleDragStart(e, dayIndex, cat.id)}
+        onDragOver={(e) => handleDragOver(e, dayIndex, cat.id)}
+        onDragLeave={handleDragLeave}
+        onDrop={(e) => handleDrop(e, dayIndex, cat.id)}
+        
+        // Touch Events
+        onTouchStart={(e) => handleTouchStart(e, dayIndex, cat.id)}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        
+        onClick={() => openEditor(dayIndex, cat.id)}
+        
+        className={`
+          relative p-3 border rounded-lg cursor-pointer transition-all duration-200 flex flex-col group select-none
+          min-h-[100px]
+          ${isDragOver ? 'border-2 border-emerald-500 bg-emerald-50 scale-[1.02] z-10 shadow-lg' : ''}
+          ${isTouchSource ? 'opacity-70 ring-2 ring-emerald-400' : ''}
+          ${!isDragOver && hasContent ? 'bg-white border-emerald-200 hover:border-emerald-400 shadow-sm' : ''}
+          ${!isDragOver && !hasContent ? 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-gray-300 border-dashed' : ''}
+        `}
+      >
+        {hasContent ? (
+          <>
+            <div className="flex justify-between items-start mb-1 pointer-events-none">
+              <div className="font-bold text-gray-800 line-clamp-2 leading-tight pr-4 text-sm sm:text-base">{entry.dishName}</div>
+              {/* Drag Handle Indicator */}
+              <div className="text-gray-300 group-hover:text-emerald-500">
+                  <GripHorizontal size={16} />
+              </div>
             </div>
-            {data.categories.map(cat => {
-              const key = `${dayIndex}-${cat.id}`;
-              const entry = data.plan[key];
-              const isDragOver = dragOverCell === key;
-              const hasContent = !!entry?.dishName;
-              const isTouchSource = activeTouchSource === key;
-
-              return (
-                <div 
-                  key={key}
-                  data-cell-key={key} // Critical for Touch detection
-                  
-                  // Mouse Events
-                  draggable={hasContent}
-                  onDragStart={(e) => hasContent && handleDragStart(e, dayIndex, cat.id)}
-                  onDragOver={(e) => handleDragOver(e, dayIndex, cat.id)}
-                  onDragLeave={handleDragLeave}
-                  onDrop={(e) => handleDrop(e, dayIndex, cat.id)}
-                  
-                  // Touch Events
-                  onTouchStart={(e) => handleTouchStart(e, dayIndex, cat.id)}
-                  onTouchMove={handleTouchMove}
-                  onTouchEnd={handleTouchEnd}
-                  
-                  onClick={() => openEditor(dayIndex, cat.id)}
-                  
-                  className={`
-                    min-h-[120px] p-3 border rounded-lg cursor-pointer transition-all duration-200 flex flex-col relative group select-none
-                    ${isDragOver ? 'border-2 border-emerald-500 bg-emerald-50 scale-[1.02] z-10 shadow-lg' : ''}
-                    ${isTouchSource ? 'opacity-70 ring-2 ring-emerald-400' : ''}
-                    ${!isDragOver && hasContent ? 'bg-white border-emerald-200 hover:border-emerald-400 shadow-sm' : ''}
-                    ${!isDragOver && !hasContent ? 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-gray-300 border-dashed' : ''}
-                  `}
-                >
-                  {hasContent ? (
-                    <>
-                      <div className="flex justify-between items-start mb-1 pointer-events-none">
-                        <div className="font-bold text-gray-800 line-clamp-2 leading-tight pr-4">{entry.dishName}</div>
-                        {/* Drag Handle Indicator */}
-                        <div className="text-gray-300 group-hover:text-emerald-500">
-                           <GripHorizontal size={16} />
-                        </div>
-                      </div>
-                      
-                      {/* Description / Preparation Method Preview */}
-                      <div className="text-xs text-gray-500 line-clamp-3 italic mt-1 flex-1 pointer-events-none">
-                        {entry.preparationMethod || "Sem modo de preparo"}
-                      </div>
-                      
-                      <div className="flex justify-between items-end mt-2 pt-2 border-t border-gray-100 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                         <div className="text-[10px] text-gray-400 flex items-center gap-1">
-                           <Copy size={10} />
-                           <span>Copiar</span>
-                         </div>
-                         <div className="bg-emerald-100 p-1 rounded-full text-emerald-600">
-                           <ChefHat size={14} />
-                         </div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="flex-1 flex items-center justify-center text-gray-300 pointer-events-none">
-                      <Plus size={24} />
-                    </div>
-                  )}
+            
+            {/* Description / Preparation Method Preview */}
+            <div className="text-xs text-gray-500 line-clamp-3 italic mt-1 flex-1 pointer-events-none">
+              {entry.preparationMethod || "Sem modo de preparo"}
+            </div>
+            
+            <div className="flex justify-between items-end mt-2 pt-2 border-t border-gray-100 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                <div className="text-[10px] text-gray-400 flex items-center gap-1">
+                  <Copy size={10} />
+                  <span>Copiar</span>
                 </div>
-              );
-            })}
+                <div className="bg-emerald-100 p-1 rounded-full text-emerald-600">
+                  <ChefHat size={14} />
+                </div>
+            </div>
+          </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center text-gray-300 pointer-events-none">
+            <Plus size={20} />
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderPlanner = () => (
+    <div className="pb-20 touch-pan-y">
+      
+      {/* --- Mobile View (Stacked Cards) --- */}
+      <div className="md:hidden space-y-4">
+        {DAYS_OF_WEEK.map((day, dayIndex) => (
+          <div key={day} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-emerald-50 px-4 py-3 border-b border-emerald-100 flex justify-between items-center">
+              <span className="font-bold text-emerald-800">{day}</span>
+              <span className="text-xs text-emerald-600 bg-white px-2 py-1 rounded-full border border-emerald-200">
+                Dia {dayIndex + 1}
+              </span>
+            </div>
+            <div className="p-3 grid gap-3">
+              {data.categories.map(cat => (
+                <div key={cat.id} className="space-y-1">
+                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wide ml-1">{cat.name}</div>
+                  {renderCell(dayIndex, cat)}
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </div>
+
+      {/* --- Desktop View (Table Grid) --- */}
+      <div className="hidden md:block overflow-x-auto">
+        <div className="min-w-[800px]">
+          {/* Header Row */}
+          <div className="grid gap-2 mb-2" style={{ gridTemplateColumns: `100px repeat(${data.categories.length}, 1fr)` }}>
+            <div className="font-bold text-gray-400 p-2 flex items-end justify-center">
+              <span className="text-xs uppercase tracking-wider">Dia</span>
+            </div>
+            {data.categories.map(cat => (
+              <div key={cat.id} className="bg-emerald-100 text-emerald-800 font-bold p-3 rounded-t-lg text-center shadow-sm truncate">
+                {cat.name}
+              </div>
+            ))}
+          </div>
+
+          {/* Rows */}
+          {DAYS_OF_WEEK.map((day, dayIndex) => (
+            <div key={day} className="grid gap-2 mb-2" style={{ gridTemplateColumns: `100px repeat(${data.categories.length}, 1fr)` }}>
+              <div className="font-bold text-gray-600 p-3 flex items-center justify-end bg-gray-100 rounded-l-lg">
+                {day}
+              </div>
+              {data.categories.map(cat => renderCell(dayIndex, cat))}
+            </div>
+          ))}
+        </div>
+      </div>
+
     </div>
   );
 
@@ -445,11 +479,11 @@ function App() {
               <CalendarDays className="w-6 h-6" />
             </div>
             <h1 className="text-xl font-bold tracking-tight text-gray-800 hidden sm:block">
-              Planejador de Refeições
+              Planejador
             </h1>
           </div>
 
-          <div className="flex items-center gap-1 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
              {/* View Toggles */}
             <div className="flex bg-gray-100 p-1 rounded-lg">
               <button
@@ -475,21 +509,22 @@ function App() {
               </button>
             </div>
 
-            <div className="h-6 w-px bg-gray-200 mx-2 hidden sm:block"></div>
+            <div className="h-6 w-px bg-gray-200 hidden sm:block"></div>
 
             <button
               onClick={handleDownloadPDF}
-              className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors shadow-sm"
+              className="flex items-center gap-2 bg-emerald-600 text-white px-3 py-2 rounded-lg hover:bg-emerald-700 transition-colors shadow-sm"
+              title="Exportar PDF"
             >
               <Download size={18} />
-              <span className="hidden sm:inline">Exportar PDF</span>
+              <span className="hidden sm:inline">PDF</span>
             </button>
           </div>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 p-4 max-w-7xl mx-auto w-full">
+      <main className="flex-1 p-2 sm:p-4 max-w-7xl mx-auto w-full">
         {currentView === ViewState.PLANNER && renderPlanner()}
         {currentView === ViewState.SHOPPING && renderShoppingList()}
         {currentView === ViewState.SETTINGS && renderSettings()}
