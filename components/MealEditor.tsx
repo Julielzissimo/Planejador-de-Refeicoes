@@ -68,7 +68,7 @@ export const MealEditor: React.FC<MealEditorProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div className="text-sm text-gray-500 mb-2">
         Editando: <span className="font-semibold text-gray-700">{dayName} - {categoryName}</span>
       </div>
@@ -80,7 +80,7 @@ export const MealEditor: React.FC<MealEditorProps> = ({
         </label>
         <input
           type="text"
-          className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-white text-gray-900"
+          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-white text-gray-900"
           placeholder="Ex: Lasanha de Berinjela"
           value={dishName}
           onChange={(e) => setDishName(e.target.value)}
@@ -92,12 +92,12 @@ export const MealEditor: React.FC<MealEditorProps> = ({
       <div>
         <div className="flex justify-between items-center mb-2">
           <label className="block text-sm font-medium text-gray-700">
-            Ingredientes (Quantidades e Itens)
+            Ingredientes
           </label>
           <button
             onClick={handleGenerateIngredients}
             disabled={!dishName || isGenerating}
-            className={`text-xs flex items-center gap-1 px-2 py-1 rounded-full transition-colors ${
+            className={`text-xs flex items-center gap-1 px-3 py-1.5 rounded-full transition-colors ${
               !dishName || isGenerating 
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
                 : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
@@ -122,12 +122,12 @@ export const MealEditor: React.FC<MealEditorProps> = ({
                   min="0"
                   step="0.1"
                   placeholder="Qtd"
-                  className="w-16 p-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary outline-none bg-white text-gray-900"
+                  className="w-14 sm:w-16 p-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary outline-none bg-white text-gray-900"
                   value={ing.quantity}
                   onChange={(e) => updateIngredient(ing.id, 'quantity', parseFloat(e.target.value) || 0)}
                 />
                 <select
-                  className="w-20 p-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary outline-none bg-white text-gray-900"
+                  className="w-20 sm:w-24 p-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary outline-none bg-white text-gray-900"
                   value={ing.unit}
                   onChange={(e) => updateIngredient(ing.id, 'unit', e.target.value)}
                 >
@@ -135,16 +135,16 @@ export const MealEditor: React.FC<MealEditorProps> = ({
                 </select>
                 <input
                   type="text"
-                  placeholder="Nome (ex: Ovo)"
-                  className="flex-1 p-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary outline-none bg-white text-gray-900"
+                  placeholder="Nome"
+                  className="flex-1 p-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary outline-none bg-white text-gray-900 min-w-0"
                   value={ing.name}
                   onChange={(e) => updateIngredient(ing.id, 'name', e.target.value)}
                 />
                 <button 
                   onClick={() => removeIngredient(ing.id)}
-                  className="text-red-400 hover:text-red-600 p-1"
+                  className="text-red-400 hover:text-red-600 p-2 shrink-0"
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={18} />
                 </button>
               </div>
             ))}
@@ -152,9 +152,9 @@ export const MealEditor: React.FC<MealEditorProps> = ({
         </div>
         <button
           onClick={addIngredientRow}
-          className="mt-2 text-sm text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1"
+          className="mt-3 text-sm text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1 p-1"
         >
-          <Plus size={16} /> Adicionar ingrediente
+          <Plus size={18} /> Adicionar ingrediente
         </button>
       </div>
 
@@ -164,23 +164,23 @@ export const MealEditor: React.FC<MealEditorProps> = ({
           Modo de Preparo
         </label>
         <textarea
-          className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none h-24 bg-white text-gray-900 resize-none"
+          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none h-24 bg-white text-gray-900 resize-none"
           placeholder="Ex: Corte as berinjelas em fatias finas..."
           value={preparationMethod}
           onChange={(e) => setPreparationMethod(e.target.value)}
         />
       </div>
 
-      <div className="flex justify-end gap-2 pt-4 border-t mt-4">
+      <div className="flex justify-end gap-3 pt-4 border-t mt-4">
         <button
           onClick={onCancel}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+          className="px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 w-full sm:w-auto"
         >
           Cancelar
         </button>
         <button
           onClick={handleSave}
-          className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-emerald-600 flex items-center gap-2"
+          className="px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-md hover:bg-emerald-600 flex items-center justify-center gap-2 w-full sm:w-auto"
         >
           <Save className="w-4 h-4" />
           Salvar
