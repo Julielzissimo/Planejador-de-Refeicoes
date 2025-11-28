@@ -191,8 +191,23 @@ function App() {
   const handleTouchEnd = (e: React.TouchEvent) => {
     if (!activeTouchSource) return;
 
-    if (dragOverCell) {
-      executeMealCopy(activeTouchSource, dragOverCell);
+    // Prevent ghost clicks/modals
+    if (e.cancelable) e.preventDefault();
+
+    // Strategy 1: Try to find the element directly under the finger upon release (High precision)
+    const touch = e.changedTouches[0];
+    const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+    const cell = targetElement?.closest('[data-cell-key]');
+    let targetKey = cell?.getAttribute('data-cell-key');
+
+    // Strategy 2: Fallback to last known dragOverCell if direct hit failed 
+    // (This handles cases where the finger might be slightly off due to slow movement)
+    if (!targetKey && dragOverCell) {
+      targetKey = dragOverCell;
+    }
+
+    if (targetKey && targetKey !== activeTouchSource) {
+      executeMealCopy(activeTouchSource, targetKey);
     }
 
     setActiveTouchSource(null);
